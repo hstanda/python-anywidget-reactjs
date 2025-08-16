@@ -1,0 +1,21 @@
+# Byte-compiled / cache files
+__pycache__/
+*.py[cod]
+*.ipynb_checkpoints
+
+# Virtual environment
+penv/
+
+# Jupyter runtime
+*.local/share/jupyter/
+*.jupyter/
+
+# Node modules (if installed manually)
+node_modules/
+
+# Logs and OS files
+*.log
+.DS_Store
+
+# Environment variables
+.env

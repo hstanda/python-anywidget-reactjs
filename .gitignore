@@ -19,3 +19,4 @@ node_modules/
 
 # Environment variables
 .env
+_frontend/package-lock.json

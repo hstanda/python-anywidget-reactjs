@@ -1,28 +1,14 @@
-import { createElement, useEffect, useState } from "react";
-import { render } from "react-dom";
+import * as React from "https://esm.sh/react@18.2.0";
+import { createRender, useModelState } from "https://esm.sh/@anywidget/react@0.2.0";
 
-export default function ({ model }) {
-  const [count, setCount] = useState(model.get("count"));
-  const [dark, setDark] = useState(model.get("dark"));
+console.log("React widget module is loaded");
 
-  useEffect(() => {
-    const updateFromModel = () => {
-      setCount(model.get("count"));
-      setDark(model.get("dark"));
-    };
-    model.on("change:count", updateFromModel);
-    model.on("change:dark", updateFromModel);
-    return () => {
-      model.off("change:count", updateFromModel);
-      model.off("change:dark", updateFromModel);
-    };
-  }, [model]);
+function Counter() {
+  const [count, setCount] = useModelState("count");
+  const [dark, setDark] = useModelState("dark");
+  console.log("Rendering Counter • count:", count, "dark:", dark);
 
-  const increment = () => model.set("count", count + 1) && model.save_changes();
-  const decrement = () => model.set("count", count - 1) && model.save_changes();
-  const toggleTheme = () => model.set("dark", !dark) && model.save_changes();
-
-  const containerStyle = {
+  const style = {
     fontFamily: "Arial, sans-serif",
     padding: "1rem",
     backgroundColor: dark ? "#1e1e1e" : "#f9f9f9",
@@ -32,15 +18,30 @@ export default function ({ model }) {
     width: "250px"
   };
 
-  render(
-    <div style={containerStyle}>
-      <h3>React Counter</h3>
-      <p>Count: {count}</p>
-      <button onClick={increment}>➕</button>
-      <button onClick={decrement}>➖</button>
-      <br /><br />
-      <button onClick={toggleTheme}>Toggle {dark ? "Light" : "Dark"} Theme</button>
-    </div>,
-    document.body
+  return React.createElement(
+    "div",
+    { style },
+    React.createElement("h3", null, "React Counter"),
+    React.createElement("p", null, `Count: ${count}`),
+    React.createElement("button", { onClick: () => setCount(count + 1) }, "➕"),
+    React.createElement("button", { onClick: () => setCount(count - 1) }, "➖"),
+    React.createElement("br"),
+    React.createElement(
+      "button",
+      { onClick: () => setDark(!dark) },
+      `Toggle ${dark ? "Light" : "Dark"} Theme`
+    )
   );
 }
+
+const renderView = createRender(Counter);
+
+export default {
+  initialize({ model }) {
+    console.log("initialize called");
+  },
+  render({ model, el }) {
+    console.log("render called");
+    return renderView({ model, el });
+  },
+};
